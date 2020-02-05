@@ -131,10 +131,8 @@ autocmd FileType sql setlocal commentstring=--\ %s
 " --- Move lines up and down --- "
 " ------------------------------ "
 
-" Move lines up and down with Ctrl-arrowup/down and Ctrl-j/k (in normal,
-visual and insert mode)
-" Note: only meant for small selections and small movements, will break
-moving
+" Move lines up and down with Ctrl-arrowup/down and Ctrl-j/k (in normal, visual and insert mode)
+" Note: only meant for small selections and small movements, will break moving
 " multiple lines down beyond the bottom.
 nnoremap <C-Down> :m .+1<CR>
 nnoremap <C-Up> :m .-2<CR>
