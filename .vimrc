@@ -1,75 +1,81 @@
 set nocompatible                " choose no compatibility with legacy vi
 
-"" Vundle setup
-set rtp+=~/.vim/bundle/Vundle.vim
+call plug#begin()
+
 "" Ctrl P search
 set runtimepath^=~/.vim/bundle/ctrlp.vim
 " Don't ignore _hidden_ dot files
 let g:ctrlp_show_hidden = 1
 
-call vundle#begin()
-
-"Vundle
-Plugin 'gmarik/Vundle.vim'
-
-"Rails
-Plugin 'tpope/vim-rails'
-
-"Ruby
-Plugin 'vim-ruby/vim-ruby'
-
-"Go
-Plugin 'fatih/vim-go'
-
-"Nerdtree
-Plugin 'scrooloose/nerdtree'
-
-"Vim Fugitive (Git)
-Plugin 'tpope/vim-fugitive'
-
-"JS / JSX
-Plugin 'pangloss/vim-javascript'
-Plugin 'mxw/vim-jsx'
-
-"Ack
-Plugin 'mileszs/ack.vim'
-
-"do...end
-Plugin 'tpope/vim-endwise'
-
-"Surround
-Plugin 'tpope/vim-surround'
-
-" Colorschemes
-Plugin 'rafi/awesome-vim-colorschemes'
+" Vim Tmux navigator
+Plug 'christoomey/vim-tmux-navigator'
 
 "CoffeeScript
-Plugin 'kchmck/vim-coffee-script'
+Plug 'kchmck/vim-coffee-script'
+
+"Colorschemes
+Plug 'rafi/awesome-vim-colorschemes'
+
+"Commentary
+Plug 'tpope/vim-commentary'
+
+"Endwise - do...end
+Plug 'tpope/vim-endwise'
+
+"Rails
+Plug 'tpope/vim-rails'
+
+"Ruby
+Plug 'vim-ruby/vim-ruby'
+
+"Surround
+Plug 'tpope/vim-surround'
 
 "Tables
-Plugin 'godlygeek/tabular'
+Plug 'godlygeek/tabular'
 
-call vundle#end() 
+" JavaScript support
+Plug 'pangloss/vim-javascript'
+
+" JS and JSX syntax
+Plug 'maxmellon/vim-jsx-pretty'
+
+"Multiple cursors
+Plug 'terryma/vim-multiple-cursors'
+
+"Nerdtree
+Plug 'scrooloose/nerdtree'
+
+"Vim Fugitive (Git)
+Plug 'tpope/vim-fugitive'
+
+"Gitgutter (shows changed lines in sidebar)
+Plug 'airblade/vim-gitgutter'
+
+"Vim RSpec
+Plug 'thoughtbot/vim-rspec'
+
+" Initialize plugin system
+call plug#end()
 
 syntax enable
 set encoding=utf-8
 set showcmd                     " display incomplete commands
 filetype plugin indent on       " load file type plugins + indentation
-colorscheme pablo
+filetype indent on       " load file type plugins + indentation
 
+colorscheme lucius
 
-"Go
-let g:go_fmt_command = "goimports"
-let g:go_highlight_extra_types = 1
-let g:go_highlight_operators = 1
-let g:go_highlight_functions = 1
-let g:go_highlight_methods = 1
-let g:go_highlight_fields = 1
-let g:go_highlight_types = 1
-let g:go_highlight_format_strings = 1
+" GoTo code navigation.
+nmap <silent> gd <Plug>(coc-definition)
+nmap <silent> gy <Plug>(coc-type-definition)
+nmap <silent> gi <Plug>(coc-implementation)
+nmap <silent> gr <Plug>(coc-references)
 
-let g:go_highlight_string_spellcheck = 1
-
+" Remap keys for applying codeAction to the current line.
+nmap <leader>ac  <Plug>(coc-codeaction)
+" Apply AutoFix to problem on the current line.
+nmap <leader>qf  <Plug>(coc-fix-current)
 
 "" Whitespace
 set nowrap                      " don't wrap lines
@@ -85,11 +91,20 @@ set winwidth=83
 set noswapfile
 set backspace=indent,eol,start
 
-"" Mouse
+""Mouse
 " set mouse=a
 
-"" Ctrl P
-let g:ctrlp_custom_ignore = 'node_modules'
+"" Ctrl P ignore
+" set wildignore+=*/.git/*,*/node_modules/*,*/.DS_Store,*/vendor,*/dist/*
+let g:ctrlp_custom_ignore = 'node_modules\|DS_Store\|git\|dist\|vendor\'
+
+"RSpec.vim mappings
+map <Leader>t :call RunCurrentSpecFile()<CR>
+map <Leader>s :call RunNearestSpec()<CR>
+map <Leader>l :call RunLastSpec()<CR>
+map <Leader>a :call RunAllSpecs()<CR>
+
+let g:rspec_command = "!bundle exec rspec {spec}"
 
 " ------------------------------- "
 " --- Leader key alternatives --- "
@@ -134,12 +149,12 @@ autocmd FileType sql setlocal commentstring=--\ %s
 " Move lines up and down with Ctrl-arrowup/down and Ctrl-j/k (in normal, visual and insert mode)
 " Note: only meant for small selections and small movements, will break moving
 " multiple lines down beyond the bottom.
-nnoremap <C-Down> :m .+1<CR>
-nnoremap <C-Up> :m .-2<CR>
-vnoremap <C-Down> :m '>+1<CR>gv
-vnoremap <C-Up> :m '<-2<CR>gv
-inoremap <C-Down> <ESC>:m .+1<CR>gi
-inoremap <C-Up> <ESC>:m .-2<CR>gi
+ nnoremap <C-Down> :m .+1<CR>
+ nnoremap <C-Up> :m .-2<CR>
+ vnoremap <C-Down> :m '>+1<CR>gv
+ vnoremap <C-Up> :m '<-2<CR>gv
+ inoremap <C-Down> <ESC>:m .+1<CR>gi
+ inoremap <C-Up> <ESC>:m .-2<CR>gi
 " For terminals where Ctrl-arrows are captured by the system.
 nnoremap <C-j> :m .+1<CR>
 nnoremap <C-k> :m .-2<CR>
@@ -153,7 +168,6 @@ inoremap <C-k> <ESC>:m .-2<CR>gi
 " ------------------ "
 
 " --- Strip whitespace ---
-
 set listchars=tab:»·,trail:·,extends:>,precedes:<
 " toggle hidden characters highlighting:
 nmap <silent> <Leader>h :set nolist!<CR>
@@ -184,35 +198,6 @@ buffer
 " `>  -> jump to the last character of the visual selection (built-in mark)
 vnoremap <Leader>p pgvy`>
 
-" ------------------------------------------------ "
-" --- Navigate within and between vim and tmux --- "
-" ------------------------------------------------ "
-
-" Also see the corresponding tmux configuration in these dotfiles.
-
-function! TmuxWinCmd(direction)
-  let wnr = winnr()
-  " try to move...
-  silent! execute 'wincmd ' . a:direction
-  " ...and if does nothing it means that it was the last vim pane,
-  " so we forward the command back to tmux
-  if wnr == winnr()
-    call system('tmux select-pane -' . tr(a:direction, 'phjkl',
-    'lLDUR'))
-  end
-endfunction
-
-nmap <M-Up>     :call TmuxWinCmd('k')<CR>
-nmap <M-Down>   :call TmuxWinCmd('j')<CR>
-nmap <M-Left>   :call TmuxWinCmd('h')<CR>
-nmap <M-Right>  :call TmuxWinCmd('l')<CR>
-
-nmap <M-k> :call TmuxWinCmd('k')<CR>
-nmap <M-j> :call TmuxWinCmd('j')<CR>
-nmap <M-h> :call TmuxWinCmd('h')<CR>
-nmap <M-l> :call TmuxWinCmd('l')<CR>
-
-" do/end match with %
 runtime macros/matchit.vim
 
 "" Searching
@@ -222,12 +207,20 @@ set ignorecase                  " searches are case insensitive...
 set smartcase                   " ... unless they contain at least one capital letter
 
 "" Nerdtree config
-map <C-n> :NERDTreeToggle<CR>   
+" Open with leader + n
+nmap <leader>n :NERDTree<cr>
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+" Show hidden files
+let NERDTreeShowHidden=1
+let NERDTreeIgnore=['\.git$']
 
 "" Line length
 set colorcolumn=85
 
 set term=screen-256color
 
-inoremap § <Esc>
+"" View TSX files as Typescript
+augroup SyntaxSettings
+    autocmd!
+    autocmd BufNewFile,BufRead *.tsx set filetype=typescript
+augroup END
