@@ -1,17 +1,10 @@
 set nocompatible                " choose no compatibility with legacy vi
+set termguicolors
 
 call plug#begin()
 
-"" Ctrl P search
-set runtimepath^=~/.vim/bundle/ctrlp.vim
-" Don't ignore _hidden_ dot files
-let g:ctrlp_show_hidden = 1
-
 " Vim Tmux navigator
 Plug 'christoomey/vim-tmux-navigator'
-
-"CoffeeScript
-Plug 'kchmck/vim-coffee-script'
 
 "Colorschemes
 Plug 'rafi/awesome-vim-colorschemes'
@@ -40,9 +33,6 @@ Plug 'pangloss/vim-javascript'
 " JS and JSX syntax
 Plug 'maxmellon/vim-jsx-pretty'
 
-"Multiple cursors
-Plug 'terryma/vim-multiple-cursors'
-
 "Nerdtree
 Plug 'scrooloose/nerdtree'
 
@@ -64,18 +54,13 @@ set showcmd                     " display incomplete commands
 filetype plugin indent on       " load file type plugins + indentation
 filetype indent on       " load file type plugins + indentation
 
-colorscheme lucius
+colorscheme pink-moon
 
 " GoTo code navigation.
 nmap <silent> gd <Plug>(coc-definition)
 nmap <silent> gy <Plug>(coc-type-definition)
 nmap <silent> gi <Plug>(coc-implementation)
 nmap <silent> gr <Plug>(coc-references)
-
-" Remap keys for applying codeAction to the current line.
-nmap <leader>ac  <Plug>(coc-codeaction)
-" Apply AutoFix to problem on the current line.
-nmap <leader>qf  <Plug>(coc-fix-current)
 
 "" Whitespace
 set nowrap                      " don't wrap lines
@@ -94,9 +79,15 @@ set backspace=indent,eol,start
 ""Mouse
 " set mouse=a
 
+" Ctrl P search
+set runtimepath^=~/.vim/bundle/ctrlp.vim
+" Don't ignore _hidden_ dot files
+let g:ctrlp_show_hidden = 1
+let g:ctrlp_map = '<c-p>'
+
 "" Ctrl P ignore
 " set wildignore+=*/.git/*,*/node_modules/*,*/.DS_Store,*/vendor,*/dist/*
-let g:ctrlp_custom_ignore = 'node_modules\|DS_Store\|git\|dist\|vendor\'
+let g:ctrlp_custom_ignore = 'node_modules\|DS_Store\|git\|dist\|vendor\|tmp'
 
 "RSpec.vim mappings
 map <Leader>t :call RunCurrentSpecFile()<CR>
@@ -205,6 +196,8 @@ set hlsearch                    " highlight matches
 set incsearch                   " incremental searching
 set ignorecase                  " searches are case insensitive...
 set smartcase                   " ... unless they contain at least one capital letter
+
+set tw=72
 
 "" Nerdtree config
 " Open with leader + n
